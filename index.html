@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Music Player Design</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://kit.fontawesome.com/c91644de9d.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="music-player">
+                <nav>
+                    <div class="circle">
+                        <i class="fa-solid fa-angle-left" id="prevSongNav"></i> <!-- Changed ID here -->
+                    </div>
+                    <div class="circle">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                </nav>
+                <img src="media/468-thumbnail.png" class="song-img" id="songImage">
+                <h1 id="songTitle">Despacito</h1>
+                <p id="songArtist">Luis Fonsi Ft. Puerto Rican</p>
+
+                <audio id="song">
+                    <source src="media/Luis-Fonsi-Ft-Daddy-Yankee-Despacito-(TrendyBeatz.com).mp3" type="audio/mpeg">
+                </audio>
+                <input type="range" value="0" id="progress">
+
+                <div class="controls">
+                    <div><i class="fa-solid fa-backward" id="prevSong"></i></div>
+                    <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrlIcon"></i></div>
+                    <div><i class="fa-solid fa-forward" id="nextSong"></i></div>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            let progress = document.getElementById("progress");
+            let song = document.getElementById("song");
+            let ctrlIcon = document.getElementById("ctrlIcon");
+            let songImage = document.getElementById("songImage");
+            let songTitle = document.getElementById("songTitle");
+            let songArtist = document.getElementById("songArtist");
+
+            // Array of songs
+            const songs = [
+                {
+                    title: "Despacito",
+                    artist: "Luis Fonsi Ft. Puerto Rican",
+                    src: "media/Luis-Fonsi-Ft-Daddy-Yankee-Despacito-(TrendyBeatz.com).mp3",
+                    img: "media/468-thumbnail.png"
+                },
+                {
+                    title: "All Falls Down",
+                    artist: "Alan Walker",
+                    src: "media/Alan walker - all falls down feat.Noah Cyrus.mp3",
+                    img: "media/Alan.jpeg"
+                },
+                {
+                    title: "Thunder",
+                    artist: "Gaby Potre",
+                    src: "media/Thunder.mp3",
+                    img: "media/Thunder.jpeg"
+                },
+                {
+                    title: "Lost Control",
+                    artist: "Alan Walker",
+                    src: "media/Lost Control.mp3",
+                    img: "media/Alan.jpeg"
+                }
+            ];
+
+            let currentSongIndex = 0;
+
+            function loadSong(songIndex) {
+                let currentSong = songs[songIndex];
+                song.src = currentSong.src;
+                songImage.src = currentSong.img;
+                songTitle.textContent = currentSong.title;
+                songArtist.textContent = currentSong.artist;
+                song.load(); // Reload the song
+                song.play(); // Play the song automatically
+                progress.value = 0;
+                ctrlIcon.classList.add("fa-pause");
+                ctrlIcon.classList.remove("fa-play");
+            }
+
+            function playPause() {
+                if (song.paused) {
+                    song.play();
+                    ctrlIcon.classList.add("fa-pause");
+                    ctrlIcon.classList.remove("fa-play");
+                } else {
+                    song.pause();
+                    ctrlIcon.classList.remove("fa-pause");
+                    ctrlIcon.classList.add("fa-play");
+                }
+            }
+
+            // Update progress bar as song plays
+            setInterval(() => {
+                progress.value = song.currentTime;
+            }, 500);
+
+            // Allow user to seek within the song
+            progress.addEventListener("input", function() {
+                song.currentTime = progress.value;
+                song.play();
+                ctrlIcon.classList.add("fa-pause");
+                ctrlIcon.classList.remove("fa-play");
+            });
+
+            // Switch to the next song
+            document.getElementById("nextSong").addEventListener("click", function() {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                loadSong(currentSongIndex);
+            });
+
+            // Switch to the previous song
+            document.getElementById("prevSong").addEventListener("click", function() {
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                loadSong(currentSongIndex);
+            });
+
+            // Switch to the previous song (from nav)
+            document.getElementById("prevSongNav").addEventListener("click", function() {
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                loadSong(currentSongIndex);
+            });
+
+            // Initialize the first song
+            loadSong(currentSongIndex);
+        </script>
+    </body>
+</html>
